@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>diff : lcs : longest common subsequence</title>
+<link rel="icon" href="data:image/x-icon;base64,">
+<script type="module">
+	
+	function run() {
+		
+		const x = [
+			`line 1`,
+			`line 2`,
+			`line 3`,
+			`line 4`,
+			`line 6`,
+			`line 7`,
+			`line 8`,
+			`line 9`,
+		].join('\n')
+		
+		const y = [
+			`line 1`,
+			`line 2 modified`,
+			`line 3`,
+			`line 5`
+		].join('\n')
+		
+		const changes = diff(x, y)
+		changes.forEach(change => {
+			let symbol = ' '
+			if (change.type === 'removed') symbol = '-'
+			if (change.type === 'added') symbol = '+'
+			console.log(`${symbol} ${change.line}`)
+		})
+	}
+	
+	run()
+	
+	function diff(x, y) {
+		
+		const result = []
+		const x_lines = x.split('\n')
+		const y_lines = y.split('\n')
+		const grid = make_grid(
+			x_lines.length + 1,
+			y_lines.length + 1
+		)
+		grid.plot()
+		grid.print()
+		grid.backtrace((type, line) => result.unshift({ type, line }))
+		return result
+		
+		function make_grid(x, y) {
+			
+			const grid = Array.from({ length: x }, () => Array(y).fill(0))
+			return { plot, backtrace, print }
+			
+			function plot() {
+				
+				cells((x, y) => {
+					if (same_line(x, y)) cell(1, 1, cell(0, 0) + 1)
+					else cell(1, 1, Math.max(cell(0, 1), cell(1, 0)))
+				})
+			}
+			
+			function backtrace(fn) {
+				
+				x = x_lines.length
+				y = y_lines.length
+				
+				while (more()) {
+					if (is_unchanged()) write('unchanged', x_line(-1), () => { x--; y--; }, fn)
+					else if (is_removed()) write('removed', x_line(-1), () => { x-- }, fn)
+					else if (is_added()) write('added', y_line(-1), () => { y-- }, fn)
+				}
+			}
+			
+			function print() {
+				return
+			}
+			
+			function cells(fn) {
+				
+				for (x = 0; x < x_lines.length; x++) {
+					for (y = 0; y < y_lines.length; y++) {
+						fn(x, y)
+					}
+				}
+			}
+			
+			function cell(x_, y_, value) {
+				
+				if (value) grid[x + x_][y + y_] = value
+				else return grid[x + x_][y + y_]
+			}
+			
+			function x_line(x_ = 0) { return x_lines[x + x_] }
+			function y_line(y_ = 0) { return y_lines[y + y_] }
+			function same_line(x, y) { return x_line() === y_line() }
+			function more() { return x > 0 || y > 0 }
+			function is_unchanged() { return x > 0 && y > 0 && x_line(-1) === y_line(-1) }
+			function is_removed() { return x > 0 && (y === 0 || cell(0, -1) < cell(-1, 0)) }
+			function is_added() { return y > 0 && (x === 0 || cell(0, -1) >= cell(-1, 0)) }
+			
+			function write(type, line, move, fn) {
+				
+				fn(type, line)
+				move()
+			}
+		}
+	}
+	
+</script>
+</head>
+<body>
+</body>
+</html>
