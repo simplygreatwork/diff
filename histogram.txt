@@ -1,0 +1,48 @@
+
+
+from google search....
+
+Here's an implementation of a histogram line diff algorithm in JavaScript: 
+function histogramLineDiff(text1, text2) {
+  const lines1 = text1.split('\n');
+  const lines2 = text2.split('\n');
+
+  const histogram1 = createHistogram(lines1);
+  const histogram2 = createHistogram(lines2);
+
+  const diff = [];
+  let i = 0;
+  let j = 0;
+
+  while (i < lines1.length || j < lines2.length) {
+    if (histogram1[lines1[i]] > 0 && histogram2[lines1[i]] > 0) {
+      diff.push({ type: 'equal', value: lines1[i] });
+      histogram1[lines1[i]]--;
+      histogram2[lines1[i]]--;
+      i++;
+      j++;
+    } else if (i < lines1.length && (j >= lines2.length || histogram1[lines1[i]] > 0)) {
+      diff.push({ type: 'delete', value: lines1[i] });
+      i++;
+    } else {
+      diff.push({ type: 'insert', value: lines2[j] });
+      j++;
+    }
+  }
+
+  return diff;
+}
+
+function createHistogram(lines) {
+  const histogram = {};
+  for (const line of lines) {
+    histogram[line] = (histogram[line] || 0) + 1;
+  }
+  return histogram;
+}
+
+This code defines two functions: histogramLineDiff and createHistogram. The histogramLineDiff function takes two strings as input, splits them into lines, creates histograms of the lines, and then compares the histograms to generate a diff. The createHistogram function takes an array of lines and returns a histogram object. 
+The histogramLineDiff function returns an array of diff objects, where each object has a type property (either "equal", "delete", or "insert") and a value property (the line that was added, deleted, or remained the same). 
+
+Generative AI is experimental.
+

@@ -1,0 +1,141 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>diff : myers</title>
+<link rel="icon" href="data:image/x-icon;base64,">
+<script type="module">
+	
+	function run() {
+		
+		const x = [
+			`line 1`,
+			`line 2`,
+			`line 3`,
+			`line 4`,
+			`line 6`,
+			`line 7`,
+			`line 8`,
+			`line 9`,
+		].join('\n')
+		
+		const y = [
+			`line 1`,
+			`line 2 modified`,
+			`line 3`,
+			`line 5`
+		].join('\n')
+		
+		const changes = diff(x, y)
+		changes.forEach(([op, char]) => console.log(op, char))
+	}
+	
+	run()
+	
+	function diff(x, y) {
+		
+		const x_lines = x.split('\n')
+		const y_lines = y.split('\n')
+		const x_length = x_lines.length
+		const y_length = y_lines.length
+		const max = x_length + y_length
+		const vector = { 0: 0 }
+		const path = []
+		const result = []
+		
+		make_track()
+		back_track()
+		dump_track()
+		
+		return result
+		
+		function make_track() {
+			
+			for (let i = 0; i <= max; i++) {
+				path.push({ ...vector })
+				for (let k = -i; k <= i; k += 2) {
+					plot(i, k, vector)
+					slide()
+					vector[k] = x
+					if (done()) return
+				}
+			}
+		}
+		
+		function back_track() {
+			
+			x = x_length, y = y_length
+			for (let i = path.length - 1; i >= 0; i--) {
+				const p = previous(i, x - y, path[i])
+				while (x > p.x && y > p.y) emit(' ', x_line(-1), () => { x--; y--; })
+				if (i === 0) continue
+				if (x > p.x) emit('-', x_line(-1), () => { x-- })
+				else emit('+', y_line(-1), () => { y-- })
+			}
+		}
+		
+		function dump_track() {
+			
+			path.forEach(vector => {
+				return
+			}) 
+		}
+		
+		function loop(fn) {
+			
+			for (let d = 0; d <= max; d++) {
+				path.push({ ...v })
+				for (let k = -d; k <= d; k += 2) {
+					fn(d, k)
+				}
+			}
+		}
+		
+		function plot(d, k, v) {
+			
+			const right = v[k + 1] || 0
+			const left = v[k - 1] || 0
+			x = k === -d || k !== d && left < right ? right : left + 1
+			y = x - k
+		}
+		
+		function slide() {
+			
+			while (x < x_length && y < y_length && x_lines[x] === y_lines[y]) {
+				x++
+				y++
+			}
+		}
+		
+		function done() {
+			
+			return x >= x_length && y >= y_length
+		}
+		
+		function previous(d, k, v) {
+			
+			const right = v[k + 1] || -1
+			const left = v[k - 1] || -1
+			k = (k === -d || (k !== d && left < right)) ? k + 1 : k - 1
+			const x = v[k] || 0
+			const y = x - k
+			return { x, y }
+		}
+		
+		function x_line(x_) { return x_lines[x + x_] }
+		function y_line(y_) { return y_lines[y + y_] }
+		
+		function emit(type, line, move) {
+			
+			result.unshift([type, line])
+			move()
+		}		
+	}
+	
+</script>
+</head>
+<body>
+</body>
+</html>
