@@ -34,16 +34,17 @@
 	
 	run()
 	
-	function diff(x, y) {
+	function diff(xx, yy) {
 		
-		const x_lines = x.split('\n')
-		const y_lines = y.split('\n')
+		const x_lines = xx.split('\n')
+		const y_lines = yy.split('\n')
 		const x_length = x_lines.length
 		const y_length = y_lines.length
 		const max = x_length + y_length
 		const vector = { 0: 0 }
 		const path = []
 		const result = []
+		let x, y
 		
 		make_track()
 		back_track()
@@ -131,7 +132,7 @@
 			
 			result.unshift([type, line])
 			move()
-		}		
+		}
 	}
 	
 </script>
