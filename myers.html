@@ -45,7 +45,7 @@
 		const vector = { 0: 0 }
 		const path = []
 		const result = []
-		let x, y
+		let x, y, p
 		
 		make_track()
 		back_track()
@@ -70,11 +70,11 @@
 			
 			x = x_length, y = y_length
 			for (let i = path.length - 1; i >= 0; i--) {
-				const p = previous(i, x - y, path[i])
-				while (x > p.x && y > p.y) emit('common', x_line(-1), () => { x--; y--; })
+				p = previous(i, x - y, path[i])
+				while (is_common()) emit('common', x_line(-1), () => { x--; y--; })
 				if (i === 0) continue
-				if (x > p.x) emit('removed', x_line(-1), () => { x-- })
-				else emit('added', y_line(-1), () => { y-- })
+				if (is_removed()) emit('removed', x_line(-1), () => { x-- })
+				else if (is_added()) emit('added', y_line(-1), () => { y-- })
 			}
 		}
 		
@@ -126,6 +126,9 @@
 			return { x, y }
 		}
 		
+		function is_common() { return x > p.x && y > p.y }
+		function is_removed() { return x > p.x }
+		function is_added() { return y > p.y }
 		function x_line(x_ = 0) { return x_lines[x + x_] }
 		function y_line(y_ = 0) { return y_lines[y + y_] }
 		

@@ -66,7 +66,7 @@
 				y = y_lines.length
 				
 				while (more()) {
-					if (is_unchanged()) write('unchanged', x_line(-1), () => { x--; y--; }, fn)
+					if (is_common()) write('common', x_line(-1), () => { x--; y--; }, fn)
 					else if (is_removed()) write('removed', x_line(-1), () => { x-- }, fn)
 					else if (is_added()) write('added', y_line(-1), () => { y-- }, fn)
 				}
@@ -95,7 +95,7 @@
 			function y_line(y_ = 0) { return y_lines[y + y_] }
 			function same_line(x, y) { return x_line() === y_line() }
 			function more() { return x > 0 || y > 0 }
-			function is_unchanged() { return x > 0 && y > 0 && x_line(-1) === y_line(-1) }
+			function is_common() { return x > 0 && y > 0 && x_line(-1) === y_line(-1) }
 			function is_removed() { return x > 0 && (y === 0 || cell(0, -1) < cell(-1, 0)) }
 			function is_added() { return y > 0 && (x === 0 || cell(0, -1) >= cell(-1, 0)) }
 			
