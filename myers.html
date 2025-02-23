@@ -30,7 +30,7 @@
 		].join('\n')
 		
 		const changes = diff(x, y)
-		changes.forEach(([operation, value, symbol]) => console.log(`${symbol} ${value}`))
+		changes.forEach(({ symbol, value }) => console.log(`${symbol} ${value}`))
 	}
 	
 	run()
@@ -134,7 +134,7 @@
 			let symbol = ' '
 			if (type == 'added') symbol = '+'
 			if (type == 'removed') symbol = '-'
-			result.unshift([type, value, symbol])
+			result.unshift({ type, value, symbol })
 			move()
 		}
 	}
