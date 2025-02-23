@@ -92,7 +92,7 @@
 		function more() { return ia < a.length || ib < b.length }
 		function is_common() { return ic < c.length && ia === c[ic].a && ib === c[ic].b }
 		function is_added() { return ib < b.length && (ia >= a.length || ib < (ic < c.length ? c[ic].b : b.length)) }
-		function is_removed() { return true }
+		function is_removed() { return ! is_added() }
 		
 		function emit(type, value, move) {
 			
