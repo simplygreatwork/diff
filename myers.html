@@ -30,7 +30,7 @@
 		].join('\n')
 		
 		const changes = diff(x, y)
-		changes.forEach(([op, char]) => console.log(op, char))
+		changes.forEach(([operation, value, symbol]) => console.log(`${symbol} ${value}`))
 	}
 	
 	run()
@@ -71,10 +71,10 @@
 			x = x_length, y = y_length
 			for (let i = path.length - 1; i >= 0; i--) {
 				const p = previous(i, x - y, path[i])
-				while (x > p.x && y > p.y) emit(' ', x_line(-1), () => { x--; y--; })
+				while (x > p.x && y > p.y) emit('common', x_line(-1), () => { x--; y--; })
 				if (i === 0) continue
-				if (x > p.x) emit('-', x_line(-1), () => { x-- })
-				else emit('+', y_line(-1), () => { y-- })
+				if (x > p.x) emit('removed', x_line(-1), () => { x-- })
+				else emit('added', y_line(-1), () => { y-- })
 			}
 		}
 		
@@ -129,9 +129,12 @@
 		function x_line(x_ = 0) { return x_lines[x + x_] }
 		function y_line(y_ = 0) { return y_lines[y + y_] }
 		
-		function emit(type, line, move) {
+		function emit(type, value, move) {
 			
-			result.unshift([type, line])
+			let symbol = ' '
+			if (type == 'added') symbol = '+'
+			if (type == 'removed') symbol = '-'
+			result.unshift([type, value, symbol])
 			move()
 		}
 	}

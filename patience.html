@@ -14,7 +14,7 @@
 		const y = ['a', 'c', 'd', 'e', 'g']
 		
 		const changes = diff(x, y)
-		console.log(`changes: ${JSON.stringify(changes, null, 2)}`)
+		changes.forEach(each => console.log(`${each.symbol} ${each.value}`))
 	}
 	
 	run()
@@ -96,7 +96,10 @@
 		
 		function emit(type, value, move) {
 			
-			result.push({ type, value })
+			let symbol = ' '
+			if (type == 'added') symbol = '+'
+			if (type == 'removed') symbol = '-'
+			result.push({ type, value, symbol })
 			move()
 		}
 	}
