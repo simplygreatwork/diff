@@ -55,8 +55,7 @@
 	function longest_common_subsequence(array) {
 		
 		array.sort((a, b) => a.a - b.a)
-		const piles = []
-		const map = new Map()
+		const piles = [], map = new Map()
 		array.forEach(each => {
 			let i = 0, end = piles.length
 			while (i < end) {
