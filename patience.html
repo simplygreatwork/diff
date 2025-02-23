@@ -1,0 +1,109 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>diff : patience</title>
+<link rel="icon" href="data:image/x-icon;base64,">
+<script type="module">
+	
+	function run() {
+		
+		const x = ['a', 'b', 'c', 'e', 'f']
+		const y = ['a', 'c', 'd', 'e', 'g']
+		
+		const changes = diff(x, y)
+		console.log(`changes: ${JSON.stringify(changes, null, 2)}`)
+	}
+	
+	run()
+	
+	function diff(a, b) {
+		
+		const common = find_unique_common(a, b)
+		const lcs = longest_common_subsequence(common)
+		return generate_diff(a, b, lcs)
+	}
+	
+	function make_map(array) {
+		
+		const map = new Map()
+		array.forEach((item, i) => {
+			if (! map.has(item)) map.set(item, [])
+			map.get(item).push(i)
+		})
+		return map
+	}
+	
+	function find_unique_common(a, b) {
+		
+		const result = []
+		const a_map = make_map(a)
+		const b_map = make_map(b)
+		for (const key of a_map.keys()) {
+			if (a_map.get(key).length === 1 && b_map.has(key) && b_map.get(key).length === 1) {
+				const value = key
+				a = a_map.get(key)[0]
+				b = b_map.get(key)[0]
+				result.push({ value, a, b })
+			}
+		}
+		return result
+	}
+	
+	function longest_common_subsequence(array) {
+		
+		array.sort((a, b) => a.a - b.a)
+		const piles = []
+		const map = new Map()
+		array.forEach(each => {
+			let i = 0, end = piles.length
+			while (i < end) {
+				const m = Math.floor((i + end) / 2)
+				if (piles[m].b < each.b) i = m + 1
+				else end = m
+			}
+			if (i > 0) map.set(each, piles[i - 1])
+			if (i === piles.length) piles.push(each)
+			else piles[i] = each
+		})
+		const result = []
+		let pile = piles.at(-1)
+		while (pile) {
+			result.unshift(pile)
+			pile = map.get(pile)
+		}
+		return result
+	}
+	
+	function generate_diff(a, b, c) {
+		
+		const result = []
+		let ia = 0, ib = 0, ic = 0
+		
+		while (more()) {
+			if (is_common()) emit('common', a[ia], () => { ia++; ib++; ic++ })
+			else if (is_added()) emit('added', b[ib], () => { ib++ })
+			else if (is_removed()) emit('removed', a[ia], () => { ia++ })
+		}
+		
+		return result
+		
+		function more() { return ia < a.length || ib < b.length }
+		function is_common() { return ic < c.length && ia === c[ic].a && ib === c[ic].b }
+		function is_added() { return ib < b.length && (ia >= a.length || ib < (ic < c.length ? c[ic].b : b.length)) }
+		function is_removed() { return true }
+		
+		function emit(type, value, move) {
+			
+			result.push({ type, value })
+			move()
+		}
+	}
+	
+</script>
+</head>
+<body>
+</body>
+</html>

@@ -24,6 +24,7 @@
 		const y = [
 			`line 1`,
 			`line 2 modified`,
+			`line 4`,
 			`line 3`,
 			`line 5`
 		].join('\n')
@@ -97,8 +98,8 @@
 		function plot(d, k, v) {
 			
 			const right = v[k + 1] || 0
-			const left = v[k - 1] || 0
-			x = k === -d || k !== d && left < right ? right : left + 1
+			const down = v[k - 1] || 0
+			x = k === -d || k !== d && down < right ? right : down + 1
 			y = x - k
 		}
 		
@@ -118,15 +119,15 @@
 		function previous(d, k, v) {
 			
 			const right = v[k + 1] || -1
-			const left = v[k - 1] || -1
-			k = (k === -d || (k !== d && left < right)) ? k + 1 : k - 1
+			const down = v[k - 1] || -1
+			k = (k === -d || (k !== d && down < right)) ? k + 1 : k - 1
 			const x = v[k] || 0
 			const y = x - k
 			return { x, y }
 		}
 		
-		function x_line(x_) { return x_lines[x + x_] }
-		function y_line(y_) { return y_lines[y + y_] }
+		function x_line(x_ = 0) { return x_lines[x + x_] }
+		function y_line(y_ = 0) { return y_lines[y + y_] }
 		
 		function emit(type, line, move) {
 			
