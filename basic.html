@@ -28,12 +28,7 @@
 		].join('\n')
 		
 		const changes = diff(x, y)
-		changes.forEach(change => {
-			let symbol = ' '
-			if (change.type === 'removed') symbol = '-'
-			if (change.type === 'added') symbol = '+'
-			console.log(`${symbol} ${change.line}`)
-		})
+		changes.forEach(({ symbol, value }) => console.log(`${symbol} ${value}`))
 	}
 	
 	run()
@@ -49,7 +44,7 @@
 		)
 		grid.plot()
 		grid.print()
-		grid.backtrace((type, line) => result.unshift({ type, line }))
+		grid.backtrace(change => result.unshift(change))
 		return result
 		
 		function make_grid(x, y) {
@@ -104,9 +99,12 @@
 			function is_removed() { return x > 0 && (y === 0 || cell(0, -1) < cell(-1, 0)) }
 			function is_added() { return y > 0 && (x === 0 || cell(0, -1) >= cell(-1, 0)) }
 			
-			function write(type, line, move, fn) {
+			function write(type, value, move, fn) {
 				
-				fn(type, line)
+				let symbol = ' '
+				if (type == 'added') symbol = '+'
+				if (type == 'removed') symbol = '-'
+				fn({ type, value, symbol })
 				move()
 			}
 		}
